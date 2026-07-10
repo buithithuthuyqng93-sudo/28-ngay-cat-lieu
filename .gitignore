@@ -45,3 +45,12 @@ next-env.d.ts
 # database
 *.db
 *.db-journal
+
+.vercel
+.env*
+
+# local agent tooling (not part of the app)
+.agents/
+.claude/
+skills-lock.json
+_*.ts
