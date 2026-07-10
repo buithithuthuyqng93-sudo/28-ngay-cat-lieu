@@ -1,0 +1,7 @@
+.env
+.env.local
+dev.db
+dev.db-journal
+.agents
+.claude
+skills-lock.json
