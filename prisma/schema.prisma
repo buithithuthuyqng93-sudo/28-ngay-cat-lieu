@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("student")
+  createdAt    DateTime @default(now())
+
+  progress    Progress[]
+  submissions Submission[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  day         Int      @unique
+  week        Int
+  title       String
+  objective   String
+  videoUrl    String
+  summary     String
+  checklist   Json
+  prompts     Json
+  challenge   String
+  duration    Int
+  createdAt   DateTime @default(now())
+
+  progress   Progress[]
+  challenges Challenge[]
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  status      String    @default("completed")
+  completedAt DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Challenge {
+  id            String   @id @default(cuid())
+  day           Int      @unique
+  title         String
+  description   String
+  level         String
+  estimatedTime String
+  lessonId      String?
+  createdAt     DateTime @default(now())
+
+  lesson      Lesson?      @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  submissions Submission[]
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  type        String
+  content     String
+  featured    Boolean  @default(false)
+  submittedAt DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+}
+
+model CaseStudy {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  category     String
+  title        String
+  description  String
+  questions    Json
+  additional   String
+  management   String
+  redFlags     Json
+  counseling   String
+  createdAt    DateTime @default(now())
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  type        String
+  category    String
+  description String
+  content     String
+  createdAt   DateTime @default(now())
+}
