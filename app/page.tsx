@@ -18,6 +18,15 @@ import {
 import { LinkButton } from "@/components/ui/Button";
 import { WEEKS } from "@/lib/weeks";
 import { PROGRAM_PRICE_LABEL } from "@/lib/progress";
+import { Reveal } from "@/components/motion/Reveal";
+import { StatCounter } from "@/components/motion/StatCounter";
+
+const stats = [
+  { value: 28, label: "ngày thử thách" },
+  { value: 28, label: "bài học ngắn" },
+  { value: 6, label: "nhóm case thực chiến" },
+  { value: 1, label: "cộng đồng hỗ trợ" },
+];
 
 const pricingBenefits = [
   "Mở khóa toàn bộ 28 ngày bài học và video bài giảng",
@@ -117,44 +126,51 @@ export default function LandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-b from-primary-50 via-white to-white">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:items-center md:px-8 md:py-24">
           <div>
-            <span className="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
-              Chương trình đào tạo thực chiến dành cho dược sĩ
-            </span>
-            <h1 className="mt-4 text-3xl font-extrabold leading-tight text-gray-900 md:text-5xl">
-              28 Ngày Thử Thách <span className="text-primary-600">Cắt Liều</span>
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
-              Rèn tư duy khai thác triệu chứng, nhận diện dấu hiệu cần chuyển tuyến và xây quy trình tư
-              vấn riêng — mỗi ngày một bài học ngắn, một thử thách thực tế ngay tại quầy thuốc.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="/hoc-thu" size="lg">
-                <PlayCircle className="size-4" />
-                Học thử Ngày 1 miễn phí
-              </LinkButton>
-              <LinkButton href="/dang-ky" size="lg" variant="outline">
-                Đăng ký tham gia
-              </LinkButton>
-            </div>
-            <p className="mt-3 text-xs text-gray-500">
-              Không cần thẻ, không cần đăng ký để xem thử — mở khóa toàn bộ chỉ {PROGRAM_PRICE_LABEL}.
-            </p>
-            <dl className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">
-              {[
-                ["28", "ngày thử thách"],
-                ["28", "bài học ngắn"],
-                ["6", "nhóm case thực chiến"],
-                ["1", "cộng đồng hỗ trợ"],
-              ].map(([value, label]) => (
-                <div key={label}>
-                  <dt className="text-2xl font-extrabold text-primary-600">{value}</dt>
-                  <dd className="text-xs text-gray-500">{label}</dd>
-                </div>
-              ))}
-            </dl>
+            <Reveal mode="mount">
+              <span className="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
+                Chương trình đào tạo thực chiến dành cho dược sĩ
+              </span>
+            </Reveal>
+            <Reveal mode="mount" delay={0.08}>
+              <h1 className="mt-4 text-3xl font-extrabold leading-tight text-gray-900 md:text-5xl">
+                28 Ngày Thử Thách <span className="text-primary-600">Cắt Liều</span>
+              </h1>
+            </Reveal>
+            <Reveal mode="mount" delay={0.16}>
+              <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
+                Rèn tư duy khai thác triệu chứng, nhận diện dấu hiệu cần chuyển tuyến và xây quy trình tư
+                vấn riêng — mỗi ngày một bài học ngắn, một thử thách thực tế ngay tại quầy thuốc.
+              </p>
+            </Reveal>
+            <Reveal mode="mount" delay={0.24}>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <LinkButton href="/hoc-thu" size="lg">
+                  <PlayCircle className="size-4" />
+                  Học thử Ngày 1 miễn phí
+                </LinkButton>
+                <LinkButton href="/dang-ky" size="lg" variant="outline">
+                  Đăng ký tham gia
+                </LinkButton>
+              </div>
+              <p className="mt-3 text-xs text-gray-500">
+                Không cần thẻ, không cần đăng ký để xem thử — mở khóa toàn bộ chỉ {PROGRAM_PRICE_LABEL}.
+              </p>
+            </Reveal>
+            <Reveal mode="mount" delay={0.32}>
+              <dl className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">
+                {stats.map(({ value, label }) => (
+                  <div key={label}>
+                    <dt className="text-2xl font-extrabold text-primary-600">
+                      <StatCounter value={value} />
+                    </dt>
+                    <dd className="text-xs text-gray-500">{label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
           </div>
 
-          <div className="relative">
+          <Reveal mode="mount" delay={0.2} x={24} y={0} className="relative">
             <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-card">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm font-bold text-gray-900">Lộ trình 28 ngày</p>
@@ -177,32 +193,34 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-            <span className="absolute -right-4 -top-4 hidden size-24 rounded-full bg-mint-200/60 blur-2xl md:block" />
-            <span className="absolute -bottom-6 -left-6 hidden size-28 rounded-full bg-primary-200/50 blur-2xl md:block" />
-          </div>
+            <span className="animate-float absolute -right-4 -top-4 hidden size-24 rounded-full bg-mint-200/60 blur-2xl md:block" />
+            <span className="animate-float-delayed absolute -bottom-6 -left-6 hidden size-28 rounded-full bg-primary-200/50 blur-2xl md:block" />
+          </Reveal>
         </div>
       </section>
 
       {/* Format */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
-        <div className="mb-10 max-w-2xl">
+        <Reveal className="mb-10 max-w-2xl">
           <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Học theo cách microlearning</h2>
           <p className="mt-2 text-gray-600">
             Mỗi ngày chỉ mất 15-20 phút — học đủ, thực hành đủ, không lý thuyết dàn trải.
           </p>
-        </div>
+        </Reveal>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {formatSteps.map(({ icon: Icon, title, description }, i) => (
-            <div key={title} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                  <Icon className="size-4.5" />
-                </span>
-                <span className="text-xs font-semibold text-gray-400">Bước {i + 1}</span>
+            <Reveal key={title} delay={i * 0.08}>
+              <div className="h-full rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <Icon className="size-4.5" />
+                  </span>
+                  <span className="text-xs font-semibold text-gray-400">Bước {i + 1}</span>
+                </div>
+                <h3 className="text-sm font-bold text-gray-900">{title}</h3>
+                <p className="mt-1.5 text-sm text-gray-600">{description}</p>
               </div>
-              <h3 className="text-sm font-bold text-gray-900">{title}</h3>
-              <p className="mt-1.5 text-sm text-gray-600">{description}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -210,19 +228,21 @@ export default function LandingPage() {
       {/* Audience */}
       <section className="bg-gray-50/70 py-16">
         <div className="mx-auto max-w-6xl px-4 md:px-8">
-          <div className="mb-10 max-w-2xl">
+          <Reveal className="mb-10 max-w-2xl">
             <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Chương trình dành cho ai?</h2>
             <p className="mt-2 text-gray-600">Phù hợp với bất kỳ ai đang đứng quầy hoặc chuẩn bị đứng quầy.</p>
-          </div>
+          </Reveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {audiences.map(({ icon: Icon, title, description }) => (
-              <div key={title} className="rounded-2xl border border-gray-200 bg-white p-5">
-                <span className="flex size-10 items-center justify-center rounded-xl bg-mint-100 text-mint-700">
-                  <Icon className="size-5" />
-                </span>
-                <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
-                <p className="mt-1.5 text-sm text-gray-600">{description}</p>
-              </div>
+            {audiences.map(({ icon: Icon, title, description }, i) => (
+              <Reveal key={title} delay={i * 0.08}>
+                <div className="h-full rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-mint-100 text-mint-700">
+                    <Icon className="size-5" />
+                  </span>
+                  <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
+                  <p className="mt-1.5 text-sm text-gray-600">{description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -231,7 +251,7 @@ export default function LandingPage() {
       {/* Benefits */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div>
+          <Reveal x={-24} y={0}>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
               <ShieldCheck className="size-3.5" />
               Lợi ích sau khi hoàn thành
@@ -242,13 +262,20 @@ export default function LandingPage() {
             <p className="mt-3 text-gray-600">
               Không chỉ là kiến thức — bạn sẽ có một quy trình tư vấn thực sự dùng được ngay tại quầy.
             </p>
-          </div>
+          </Reveal>
           <ul className="space-y-3">
-            {benefits.map((b) => (
-              <li key={b} className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-card">
+            {benefits.map((b, i) => (
+              <Reveal
+                key={b}
+                delay={i * 0.06}
+                x={24}
+                y={0}
+                as="li"
+                className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-card"
+              >
                 <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary-600" />
                 <span className="text-sm text-gray-700">{b}</span>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>
@@ -257,20 +284,22 @@ export default function LandingPage() {
       {/* Program structure */}
       <section className="bg-gray-50/70 py-16">
         <div className="mx-auto max-w-6xl px-4 md:px-8">
-          <div className="mb-10 max-w-2xl">
+          <Reveal className="mb-10 max-w-2xl">
             <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Cấu trúc chương trình — 4 tuần</h2>
             <p className="mt-2 text-gray-600">28 bài học được sắp xếp theo lộ trình tăng dần độ khó.</p>
-          </div>
+          </Reveal>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {WEEKS.map((week) => (
-              <div key={week.number} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
-                <span className="inline-flex items-center rounded-full bg-primary-600 px-2.5 py-1 text-xs font-bold text-white">
-                  Tuần {week.number}
-                </span>
-                <p className="mt-3 text-xs font-semibold text-gray-400">{week.dayRange}</p>
-                <h3 className="mt-1 text-sm font-bold text-gray-900">{week.title}</h3>
-                <p className="mt-1.5 text-sm text-gray-600">{week.description}</p>
-              </div>
+            {WEEKS.map((week, i) => (
+              <Reveal key={week.number} delay={i * 0.08}>
+                <div className="h-full rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <span className="inline-flex items-center rounded-full bg-primary-600 px-2.5 py-1 text-xs font-bold text-white">
+                    Tuần {week.number}
+                  </span>
+                  <p className="mt-3 text-xs font-semibold text-gray-400">{week.dayRange}</p>
+                  <h3 className="mt-1 text-sm font-bold text-gray-900">{week.title}</h3>
+                  <p className="mt-1.5 text-sm text-gray-600">{week.description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -278,76 +307,82 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
-        <div className="mb-10 text-center">
+        <Reveal className="mb-10 text-center">
           <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Học thử trước, ưng rồi mở khóa</h2>
           <p className="mx-auto mt-2 max-w-xl text-gray-600">
             Xem miễn phí trọn Ngày 1 — không cần đăng ký. Thích chương trình thì mở khóa toàn bộ 28 ngày với một lần thanh toán duy nhất.
           </p>
-        </div>
+        </Reveal>
         <div className="mx-auto grid max-w-3xl gap-5 sm:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-card">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
-              <PlayCircle className="size-3.5" />
-              Học thử
-            </span>
-            <p className="mt-4 text-3xl font-extrabold text-gray-900">Miễn phí</p>
-            <ul className="mt-5 space-y-2.5 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
-                Trọn vẹn bài học Ngày 1
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
-                Không cần đăng ký để xem
-              </li>
-              <li className="flex items-start gap-2 text-gray-400">
-                <Lock className="mt-0.5 size-4 shrink-0" />
-                27 ngày còn lại đang khóa
-              </li>
-            </ul>
-            <LinkButton href="/hoc-thu" size="md" variant="outline" className="mt-6 w-full">
-              Học thử ngay
-            </LinkButton>
-          </div>
-
-          <div className="relative rounded-2xl border-2 border-primary-600 bg-white p-6 shadow-card">
-            <span className="absolute -top-3 right-6 rounded-full bg-primary-600 px-3 py-1 text-xs font-bold text-white">
-              Trọn khóa
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-700">
-              <Award className="size-3.5" />
-              Toàn bộ chương trình
-            </span>
-            <p className="mt-4 text-3xl font-extrabold text-primary-600">{PROGRAM_PRICE_LABEL}</p>
-            <ul className="mt-5 space-y-2.5 text-sm text-gray-700">
-              {pricingBenefits.map((b) => (
-                <li key={b} className="flex items-start gap-2">
+          <Reveal x={-16} y={0}>
+            <div className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
+                <PlayCircle className="size-3.5" />
+                Học thử
+              </span>
+              <p className="mt-4 text-3xl font-extrabold text-gray-900">Miễn phí</p>
+              <ul className="mt-5 space-y-2.5 text-sm text-gray-600">
+                <li className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
-                  {b}
+                  Trọn vẹn bài học Ngày 1
                 </li>
-              ))}
-            </ul>
-            <LinkButton href="/dang-ky" size="md" className="mt-6 w-full">
-              Đăng ký & mở khóa
-            </LinkButton>
-          </div>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                  Không cần đăng ký để xem
+                </li>
+                <li className="flex items-start gap-2 text-gray-400">
+                  <Lock className="mt-0.5 size-4 shrink-0" />
+                  27 ngày còn lại đang khóa
+                </li>
+              </ul>
+              <LinkButton href="/hoc-thu" size="md" variant="outline" className="mt-6 w-full">
+                Học thử ngay
+              </LinkButton>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.1} x={16} y={0}>
+            <div className="relative h-full rounded-2xl border-2 border-primary-600 bg-white p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <span className="absolute -top-3 right-6 rounded-full bg-primary-600 px-3 py-1 text-xs font-bold text-white">
+                Trọn khóa
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-700">
+                <Award className="size-3.5" />
+                Toàn bộ chương trình
+              </span>
+              <p className="mt-4 text-3xl font-extrabold text-primary-600">{PROGRAM_PRICE_LABEL}</p>
+              <ul className="mt-5 space-y-2.5 text-sm text-gray-700">
+                {pricingBenefits.map((b) => (
+                  <li key={b} className="flex items-start gap-2">
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <LinkButton href="/dang-ky" size="md" className="mt-6 w-full">
+                Đăng ký & mở khóa
+              </LinkButton>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
-        <div className="rounded-3xl bg-gradient-to-br from-primary-600 to-mint-600 px-6 py-12 text-center text-white shadow-card md:px-16">
-          <h2 className="text-2xl font-bold md:text-3xl">Sẵn sàng cắt liều tự tin và an toàn hơn?</h2>
-          <p className="mx-auto mt-3 max-w-xl text-primary-50">
-            Học thử Ngày 1 miễn phí ngay hôm nay — ưng thì mở khóa toàn bộ 28 ngày chỉ với {PROGRAM_PRICE_LABEL}.
-          </p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <LinkButton href="/hoc-thu" size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
-              Học thử miễn phí ngay
-              <ArrowRight className="size-4" />
-            </LinkButton>
+        <Reveal>
+          <div className="rounded-3xl bg-gradient-to-br from-primary-600 to-mint-600 px-6 py-12 text-center text-white shadow-card md:px-16">
+            <h2 className="text-2xl font-bold md:text-3xl">Sẵn sàng cắt liều tự tin và an toàn hơn?</h2>
+            <p className="mx-auto mt-3 max-w-xl text-primary-50">
+              Học thử Ngày 1 miễn phí ngay hôm nay — ưng thì mở khóa toàn bộ 28 ngày chỉ với {PROGRAM_PRICE_LABEL}.
+            </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <LinkButton href="/hoc-thu" size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
+                Học thử miễn phí ngay
+                <ArrowRight className="size-4" />
+              </LinkButton>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <footer className="border-t border-gray-100 py-8">
