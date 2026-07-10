@@ -4,12 +4,14 @@ import { getLessonsWithStatus } from "@/lib/progress";
 import { WEEKS } from "@/lib/weeks";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { LessonCard } from "@/components/lessons/LessonCard";
+import { PaywallBanner } from "@/components/lessons/PaywallBanner";
 
 export const metadata: Metadata = { title: "Lộ trình 28 ngày | 28 Ngày Thử Thách Cắt Liều" };
 
 export default async function RoadmapPage() {
   const user = await getCurrentUser();
   const lessons = await getLessonsWithStatus(user.id);
+  const hasPaid = !lessons.some((l) => l.requiresPayment);
 
   return (
     <div className="space-y-8">
@@ -19,6 +21,8 @@ export default async function RoadmapPage() {
           Mỗi ngày một bài học ngắn — hoàn thành lần lượt để mở khóa bài tiếp theo.
         </p>
       </div>
+
+      {!hasPaid && <PaywallBanner />}
 
       {WEEKS.map((week) => {
         const weekLessons = lessons.filter((l) => l.day >= week.startDay && l.day <= week.endDay);

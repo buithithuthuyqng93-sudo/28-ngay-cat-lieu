@@ -12,9 +12,19 @@ import {
   MessagesSquare,
   ClipboardList,
   Award,
+  PlayCircle,
+  Lock,
 } from "lucide-react";
 import { LinkButton } from "@/components/ui/Button";
 import { WEEKS } from "@/lib/weeks";
+import { PROGRAM_PRICE_LABEL } from "@/lib/progress";
+
+const pricingBenefits = [
+  "Mở khóa toàn bộ 28 ngày bài học và video bài giảng",
+  "Không giới hạn thời gian truy cập lại nội dung",
+  "Nộp thử thách và nhận phản hồi từ cộng đồng học viên",
+  "Đầy đủ checklist, mẫu quy trình và tài nguyên tải về",
+];
 
 const audiences = [
   {
@@ -85,6 +95,12 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-2">
             <Link
+              href="/hoc-thu"
+              className="hidden rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 sm:block"
+            >
+              Học thử miễn phí
+            </Link>
+            <Link
               href="/dang-nhap"
               className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
             >
@@ -112,14 +128,17 @@ export default function LandingPage() {
               vấn riêng — mỗi ngày một bài học ngắn, một thử thách thực tế ngay tại quầy thuốc.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="/dang-ky" size="lg">
-                Đăng ký tham gia miễn phí
-                <ArrowRight className="size-4" />
+              <LinkButton href="/hoc-thu" size="lg">
+                <PlayCircle className="size-4" />
+                Học thử Ngày 1 miễn phí
               </LinkButton>
-              <LinkButton href="/dang-nhap" size="lg" variant="outline">
-                Tôi đã có tài khoản
+              <LinkButton href="/dang-ky" size="lg" variant="outline">
+                Đăng ký tham gia
               </LinkButton>
             </div>
+            <p className="mt-3 text-xs text-gray-500">
+              Không cần thẻ, không cần đăng ký để xem thử — mở khóa toàn bộ chỉ {PROGRAM_PRICE_LABEL}.
+            </p>
             <dl className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">
               {[
                 ["28", "ngày thử thách"],
@@ -257,16 +276,74 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Học thử trước, ưng rồi mở khóa</h2>
+          <p className="mx-auto mt-2 max-w-xl text-gray-600">
+            Xem miễn phí trọn Ngày 1 — không cần đăng ký. Thích chương trình thì mở khóa toàn bộ 28 ngày với một lần thanh toán duy nhất.
+          </p>
+        </div>
+        <div className="mx-auto grid max-w-3xl gap-5 sm:grid-cols-2">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-card">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
+              <PlayCircle className="size-3.5" />
+              Học thử
+            </span>
+            <p className="mt-4 text-3xl font-extrabold text-gray-900">Miễn phí</p>
+            <ul className="mt-5 space-y-2.5 text-sm text-gray-600">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                Trọn vẹn bài học Ngày 1
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                Không cần đăng ký để xem
+              </li>
+              <li className="flex items-start gap-2 text-gray-400">
+                <Lock className="mt-0.5 size-4 shrink-0" />
+                27 ngày còn lại đang khóa
+              </li>
+            </ul>
+            <LinkButton href="/hoc-thu" size="md" variant="outline" className="mt-6 w-full">
+              Học thử ngay
+            </LinkButton>
+          </div>
+
+          <div className="relative rounded-2xl border-2 border-primary-600 bg-white p-6 shadow-card">
+            <span className="absolute -top-3 right-6 rounded-full bg-primary-600 px-3 py-1 text-xs font-bold text-white">
+              Trọn khóa
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-700">
+              <Award className="size-3.5" />
+              Toàn bộ chương trình
+            </span>
+            <p className="mt-4 text-3xl font-extrabold text-primary-600">{PROGRAM_PRICE_LABEL}</p>
+            <ul className="mt-5 space-y-2.5 text-sm text-gray-700">
+              {pricingBenefits.map((b) => (
+                <li key={b} className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                  {b}
+                </li>
+              ))}
+            </ul>
+            <LinkButton href="/dang-ky" size="md" className="mt-6 w-full">
+              Đăng ký & mở khóa
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-8">
         <div className="rounded-3xl bg-gradient-to-br from-primary-600 to-mint-600 px-6 py-12 text-center text-white shadow-card md:px-16">
           <h2 className="text-2xl font-bold md:text-3xl">Sẵn sàng cắt liều tự tin và an toàn hơn?</h2>
           <p className="mx-auto mt-3 max-w-xl text-primary-50">
-            Tham gia miễn phí ngay hôm nay, học 15-20 phút mỗi ngày và theo dõi tiến độ của chính bạn.
+            Học thử Ngày 1 miễn phí ngay hôm nay — ưng thì mở khóa toàn bộ 28 ngày chỉ với {PROGRAM_PRICE_LABEL}.
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <LinkButton href="/dang-ky" size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
-              Đăng ký tham gia ngay
+            <LinkButton href="/hoc-thu" size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
+              Học thử miễn phí ngay
               <ArrowRight className="size-4" />
             </LinkButton>
           </div>

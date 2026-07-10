@@ -9,6 +9,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { LinkButton } from "@/components/ui/Button";
 import { LevelBadge } from "@/components/ui/LevelBadge";
 import { BadgeChip } from "@/components/ui/BadgeChip";
+import { PaywallBanner } from "@/components/lessons/PaywallBanner";
 
 export const metadata: Metadata = { title: "Trang chủ | 28 Ngày Thử Thách Cắt Liều" };
 
@@ -35,6 +36,8 @@ export default async function DashboardPage() {
         <p className="text-sm text-gray-500">Chào mừng quay lại,</p>
         <h1 className="text-2xl font-bold text-gray-900">{firstName}</h1>
       </div>
+
+      {!stats.hasPaid && <PaywallBanner />}
 
       {/* Overall progress */}
       <Card className="p-5">
@@ -75,9 +78,13 @@ export default async function DashboardPage() {
                 <ArrowRight className="size-3.5" />
               </LinkButton>
             </div>
-          ) : (
+          ) : stats.hasPaid ? (
             <p className="text-sm text-gray-500">
               Bạn đã hoàn thành toàn bộ 28 ngày. Ghé lộ trình để ôn lại bất kỳ bài nào!
+            </p>
+          ) : (
+            <p className="text-sm text-gray-500">
+              Bạn đã học xong Ngày 1. Mở khóa toàn bộ chương trình để tiếp tục hành trình!
             </p>
           )}
         </Card>

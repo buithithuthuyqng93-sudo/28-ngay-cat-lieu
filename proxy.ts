@@ -10,6 +10,7 @@ const protectedPrefixes = [
   "/tai-nguyen",
   "/cong-dong",
   "/tien-do",
+  "/thanh-toan",
 ];
 const authRoutes = ["/dang-nhap", "/dang-ky"];
 

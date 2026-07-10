@@ -3,17 +3,21 @@ import { prisma } from "@/lib/prisma";
 import type { Lesson, Progress } from "@/generated/prisma/client";
 
 export const TOTAL_DAYS = 28;
+export const FREE_TRIAL_DAY = 1;
+export const PROGRAM_PRICE = 299000;
+export const PROGRAM_PRICE_LABEL = "299.000đ";
 
 export type LessonStatus = "locked" | "not_started" | "in_progress" | "completed";
 
 export type LessonWithStatus = Lesson & {
   status: LessonStatus;
   completedAt: Date | null;
+  requiresPayment: boolean;
 };
 
-function dayOfChallenge(createdAt: Date) {
+function dayOfChallenge(referenceDate: Date) {
   const msPerDay = 24 * 60 * 60 * 1000;
-  const start = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+  const start = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
   const today = new Date();
   const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   return Math.floor((now.getTime() - start.getTime()) / msPerDay);
@@ -22,15 +26,22 @@ function dayOfChallenge(createdAt: Date) {
 export async function getLessonsWithStatus(userId: string): Promise<LessonWithStatus[]> {
   const [lessons, user, progressRows] = await Promise.all([
     prisma.lesson.findMany({ orderBy: { day: "asc" } }),
-    prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { createdAt: true } }),
+    prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { createdAt: true, paidAt: true } }),
     prisma.progress.findMany({ where: { userId } }),
   ]);
 
   const progressByLesson = new Map<string, Progress>(progressRows.map((p) => [p.lessonId, p]));
-  const unlockedUpToDay = Math.min(TOTAL_DAYS, dayOfChallenge(user.createdAt) + 1);
+  const hasPaid = user.paidAt !== null;
+
+  // Day 1 is always a free trial. Once paid, pacing restarts from paidAt so the
+  // learner immediately gets day 2 too, then a new day unlocks daily after that.
+  const unlockedUpToDay = hasPaid
+    ? Math.min(TOTAL_DAYS, dayOfChallenge(user.paidAt!) + FREE_TRIAL_DAY + 1)
+    : FREE_TRIAL_DAY;
 
   return lessons.map((lesson) => {
     const progress = progressByLesson.get(lesson.id);
+    const requiresPayment = !hasPaid && lesson.day > FREE_TRIAL_DAY;
     let status: LessonStatus;
 
     if (progress) {
@@ -43,7 +54,7 @@ export async function getLessonsWithStatus(userId: string): Promise<LessonWithSt
       status = "not_started";
     }
 
-    return { ...lesson, status, completedAt: progress?.completedAt ?? null };
+    return { ...lesson, status, completedAt: progress?.completedAt ?? null, requiresPayment };
   });
 }
 
@@ -84,6 +95,7 @@ export type DashboardStats = {
   streak: number;
   submissionCount: number;
   nextLesson: LessonWithStatus | null;
+  hasPaid: boolean;
 };
 
 export async function getDashboardStats(userId: string): Promise<DashboardStats> {
@@ -98,6 +110,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     lessons.find((l) => l.status === "in_progress") ??
     lessons.find((l) => l.status === "not_started") ??
     null;
+  const hasPaid = !lessons.some((l) => l.requiresPayment);
 
   return {
     completedCount: completed.length,
@@ -106,6 +119,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     streak,
     submissionCount,
     nextLesson,
+    hasPaid,
   };
 }
 

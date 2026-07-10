@@ -1136,15 +1136,17 @@ async function main() {
   console.log("Seeding demo accounts...");
   const demoPasswordHash = await bcrypt.hash("hoctap123", 10);
   const demoCreatedAt = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000);
+  const demoPaidAt = demoCreatedAt;
 
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@capliu28ngay.vn" },
-    update: { passwordHash: demoPasswordHash, createdAt: demoCreatedAt },
+    update: { passwordHash: demoPasswordHash, createdAt: demoCreatedAt, paidAt: demoPaidAt },
     create: {
       name: "Nguyễn Minh Anh",
       email: "demo@capliu28ngay.vn",
       passwordHash: demoPasswordHash,
       createdAt: demoCreatedAt,
+      paidAt: demoPaidAt,
     },
   });
 

@@ -4,6 +4,7 @@ import { getLessonsWithStatus } from "@/lib/progress";
 import { prisma } from "@/lib/prisma";
 import { WEEKS } from "@/lib/weeks";
 import { ChallengeCard } from "@/components/challenges/ChallengeCard";
+import { PaywallBanner } from "@/components/lessons/PaywallBanner";
 
 export const metadata: Metadata = { title: "Thử thách | 28 Ngày Thử Thách Cắt Liều" };
 
@@ -17,6 +18,7 @@ export default async function ChallengesPage() {
   ]);
 
   const lockedDays = new Set(lessons.filter((l) => l.status === "locked").map((l) => l.day));
+  const hasPaid = !lessons.some((l) => l.requiresPayment);
   const submissionByChallenge = new Map(submissions.map((s) => [s.challengeId, s]));
   const submittedCount = submissions.length;
 
@@ -28,6 +30,8 @@ export default async function ChallengesPage() {
           Bạn đã nộp {submittedCount}/{challenges.length} thử thách. Mỗi thử thách gắn với bài học cùng ngày.
         </p>
       </div>
+
+      {!hasPaid && <PaywallBanner />}
 
       {WEEKS.map((week) => {
         const weekChallenges = challenges.filter((c) => c.day >= week.startDay && c.day <= week.endDay);
