@@ -21,9 +21,9 @@ Next.js App Router, một project duy nhất tại repo root.
 
 ## Phase 1: Setup
 
-- [ ] T001 Gỡ `@payos/node` (`npm uninstall @payos/node`), cài `resend`
+- [X] T001 Gỡ `@payos/node` (`npm uninstall @payos/node`), cài `resend`
       (`npm install resend`)
-- [ ] T002 [P] Sửa `.env.example`: xoá `PAYOS_CLIENT_ID`/`PAYOS_API_KEY`/
+- [X] T002 [P] Sửa `.env.example`: xoá `PAYOS_CLIENT_ID`/`PAYOS_API_KEY`/
       `PAYOS_CHECKSUM_KEY`; thêm `SEPAY_WEBHOOK_API_KEY`, `SEPAY_USER_API_TOKEN`,
       `SEPAY_BANK_ACCOUNT`, `SEPAY_BANK_NAME`, `RESEND_API_KEY`, `EMAIL_FROM`
 
@@ -33,25 +33,25 @@ Next.js App Router, một project duy nhất tại repo root.
 
 **⚠️ CRITICAL**: Không bắt đầu Phase 3+ khi Phase này chưa xong
 
-- [ ] T003 Sửa `prisma/schema.prisma`: model `Order` — đổi `payosOrderCode` (Int) thành
+- [X] T003 Sửa `prisma/schema.prisma`: model `Order` — đổi `payosOrderCode` (Int) thành
       `orderCode` (String, unique), đổi `checkoutUrl` thành `qrImageUrl`, xoá `qrCode` và
       `paymentLinkId`, bỏ giá trị `"cancelled"` khỏi các nơi enum-comment nếu có; thêm
       model `Lead` mới đúng `data-model.md` (`userId` unique, `phone`, `pharmacyName`,
       `surveyRole`, `surveyChallenge`, `createdAt`)
-- [ ] T004 Chạy `npx prisma migrate dev --name sepay-and-lead` rồi `npx prisma generate`;
+- [X] T004 Chạy `npx prisma migrate dev --name sepay-and-lead` rồi `npx prisma generate`;
       xác nhận không còn lỗi type ở các file cũ dùng field PayOS (sẽ sửa ở Phase 3)
-- [ ] T005 [P] Tạo `lib/sepay.ts`: hàm `buildQrImageUrl(orderCode, amount)` (dựng URL theo
+- [X] T005 [P] Tạo `lib/sepay.ts`: hàm `buildQrImageUrl(orderCode, amount)` (dựng URL theo
       `research.md`), hàm `findMatchingSepayTransaction(orderCode, amount)` gọi
       `GET https://my.sepay.vn/userapi/transactions/list?account_number=...&limit=20` với
       header `Authorization: Bearer SEPAY_USER_API_TOKEN`, trả về giao dịch khớp hoặc
       `null`
-- [ ] T006 [P] Tạo `lib/leads.ts`: hàm `getLeadForUser(userId)`
+- [X] T006 [P] Tạo `lib/leads.ts`: hàm `getLeadForUser(userId)`
       (`prisma.lead.findUnique({ where: { userId } })`)
-- [ ] T007 [P] Tạo `lib/email.ts`: khởi tạo `Resend` client (đọc `RESEND_API_KEY`), hàm
+- [X] T007 [P] Tạo `lib/email.ts`: khởi tạo `Resend` client (đọc `RESEND_API_KEY`), hàm
       `sendChallengeConfirmationEmail(user: { email: string; name: string })` gửi qua
       `resend.emails.send()` với `from`, `to`, `subject`, `html` tiếng Việt kèm link
       `${APP_URL}/lo-trinh`
-- [ ] T008 Sửa `lib/orders.ts`: hàm `generatePayosOrderCode` → `generateOrderCode` (đổi
+- [X] T008 Sửa `lib/orders.ts`: hàm `generatePayosOrderCode` → `generateOrderCode` (đổi
       sang sinh chuỗi `"CATLIEU" + ...`); `confirmOrderPaid` nhận `orderCode: string` thay
       vì `number`, sau khi transaction cập nhật `paidAt` thành công thì gọi
       `sendChallengeConfirmationEmail` trong try/catch riêng (lỗi chỉ log, không throw);
@@ -73,26 +73,26 @@ không thao tác thủ công. (= Kịch bản 1, 2, 3 trong `quickstart.md`)
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Xoá `app/api/webhook/payos/route.ts`, `lib/payos.ts`,
+- [X] T009 [P] [US1] Xoá `app/api/webhook/payos/route.ts`, `lib/payos.ts`,
       `scripts/register-payos-webhook.ts`
-- [ ] T010 [P] [US1] Tạo `app/api/webhook/sepay/route.ts` đúng
+- [X] T010 [P] [US1] Tạo `app/api/webhook/sepay/route.ts` đúng
       `contracts/sepay-webhook.md`: xác thực header `Authorization: Apikey ...` bằng so
       sánh timing-safe → sai thì trả `401` không đọc body; bỏ qua `transferType !== "in"`;
       tìm `orderCode` từ `code` hoặc regex trong `content`; không tìm thấy → no-op `200`;
       tìm thấy `Order` `pending` và `transferAmount === order.amount` → gọi
       `confirmOrderPaid` (đã tự gửi email từ T008); log tối thiểu mỗi lượt gọi; trả
       `{ success: true }` theo đúng quy ước SePay
-- [ ] T011 [US1] Tạo `components/payment/LeadForm.tsx` (client component,
+- [X] T011 [US1] Tạo `components/payment/LeadForm.tsx` (client component,
       `useActionState`): input SĐT, tên nhà thuốc, radio/select 4 lựa chọn `surveyRole`,
       textarea `surveyChallenge`, hiển thị lỗi validate theo trường
-- [ ] T012 [US1] Tạo `lib/actions/lead.ts`: server action `saveLead` validate 4 trường bắt
+- [X] T012 [US1] Tạo `lib/actions/lead.ts`: server action `saveLead` validate 4 trường bắt
       buộc, `prisma.lead.create(...)`, coi trùng unique constraint là thành công (idempotent),
       `revalidatePath("/thanh-toan")`
-- [ ] T013 [US1] Sửa `lib/actions/payment.ts`: đổi `createPayOSOrder` thành
+- [X] T013 [US1] Sửa `lib/actions/payment.ts`: đổi `createPayOSOrder` thành
       `createSepayOrder` — bỏ toàn bộ gọi `getPayOS()`, dùng `generateOrderCode` (T008) +
       `buildQrImageUrl` (T005) để tạo `Order` (`qrImageUrl`, `expiresAt = now + 30 phút`),
       thêm tiền điều kiện chặn nếu chưa có `Lead`
-- [ ] T014 [US1] Viết lại `app/(app)/thanh-toan/page.tsx`: thêm bước kiểm tra `getLeadForUser`
+- [X] T014 [US1] Viết lại `app/(app)/thanh-toan/page.tsx`: thêm bước kiểm tra `getLeadForUser`
       trước bước Order — chưa có thì render `LeadForm`, có rồi mới vào nhánh Order/QR như
       cũ (đổi `checkoutUrl`→`qrImageUrl`, đổi text nhắc "PayOS" nếu còn sót)
 
@@ -116,10 +116,10 @@ lẫn đối chiếu dự phòng. Phase này tập trung xác nhận nội dung 
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Hoàn thiện nội dung HTML email trong `lib/email.ts`: lời chào theo tên,
+- [X] T015 [US2] Hoàn thiện nội dung HTML email trong `lib/email.ts`: lời chào theo tên,
       xác nhận thanh toán thành công, nút/link rõ ràng tới `${APP_URL}/lo-trinh`, giọng
       điệu tiếng Việt chuyên nghiệp nhất quán phần còn lại sản phẩm
-- [ ] T016 [P] [US2] Rà soát `confirmOrderPaid` (`lib/orders.ts`) xác nhận lỗi từ
+- [X] T016 [P] [US2] Rà soát `confirmOrderPaid` (`lib/orders.ts`) xác nhận lỗi từ
       `sendChallengeConfirmationEmail` bị bắt trong try/catch riêng, không propagate lên
       làm hỏng transaction đã commit hay response của route webhook
 
@@ -139,11 +139,11 @@ trễ/mất.
 
 ### Implementation for User Story 3
 
-- [ ] T017 [US3] Xác nhận `app/(app)/thanh-toan/page.tsx` gọi `syncOrderStatus` (đã sửa ở
+- [X] T017 [US3] Xác nhận `app/(app)/thanh-toan/page.tsx` gọi `syncOrderStatus` (đã sửa ở
       T008) mỗi khi render với order đang `pending`, và nhánh "đơn cũ hết hạn" hiển thị
       đúng thông báo + nút tạo mới mà không render lại `LeadForm` (vì Lead đã tồn tại từ
       trước, độc lập với vòng đời Order)
-- [ ] T018 [P] [US3] Rà soát toàn bộ UI (`components/payment/*`, trang thanh toán) không
+- [X] T018 [P] [US3] Rà soát toàn bộ UI (`components/payment/*`, trang thanh toán) không
       còn nhánh nào tham chiếu trạng thái `"cancelled"` (đã bỏ khỏi model theo T003) —
       xoá nhánh code/text tương ứng còn sót từ feature 002
 
@@ -153,15 +153,15 @@ trễ/mất.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T019 [P] Cập nhật `README.md`: thay hướng dẫn "Kết nối thanh toán PayOS" bằng hướng
+- [X] T019 [P] Cập nhật `README.md`: thay hướng dẫn "Kết nối thanh toán PayOS" bằng hướng
       dẫn SePay (cấu hình tiền tố mã thanh toán, webhook API Key, Transactions API token)
       + Resend (xác minh domain, API key)
-- [ ] T020 [P] Cập nhật `.specify/memory/constitution.md` nếu có đoạn nào nhắc PayOS như
+- [X] T020 [P] Cập nhật `.specify/memory/constitution.md` nếu có đoạn nào nhắc PayOS như
       cổng thanh toán hiện tại (Nguyên tắc IV/VI từ lần cập nhật trước) — sửa thành SePay,
       bump version PATCH theo đúng quy tắc Governance
-- [ ] T021 Rà soát toàn repo (`grep -rn "payos\|PayOS"` không tính thư mục `specs/`) xác
+- [X] T021 Rà soát toàn repo (`grep -rn "payos\|PayOS"` không tính thư mục `specs/`) xác
       nhận không còn import/nhắc tới PayOS trong code thật
-- [ ] T022 Chạy đủ 7 kịch bản trong `quickstart.md`, xác nhận `npm run build` xanh, commit,
+- [X] T022 Chạy đủ 7 kịch bản trong `quickstart.md`, xác nhận `npm run build` xanh, commit,
       deploy Vercel; nhắc chủ dự án tự thêm 6 biến môi trường mới trên Vercel trước khi
       deploy production — không dán giá trị thật vào chat/commit
 
