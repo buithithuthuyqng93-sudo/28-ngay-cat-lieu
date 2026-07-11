@@ -3,10 +3,12 @@ import Link from "next/link";
 import { CheckCircle2, ShieldCheck, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { getCurrentUser } from "@/lib/dal";
 import { getLatestOrder, syncOrderStatus } from "@/lib/orders";
-import { PROGRAM_PRICE_LABEL } from "@/lib/progress";
+import { getLeadForUser } from "@/lib/leads";
+import { PROGRAM_PRICE_LABEL } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { CreateOrderButton } from "@/components/payment/CreateOrderButton";
+import { LeadForm } from "@/components/payment/LeadForm";
 
 export const metadata: Metadata = { title: "Thanh toán | 28 Ngày Thử Thách Cắt Liều" };
 
@@ -36,14 +38,27 @@ function UnlockedNotice() {
   );
 }
 
-type Props = { searchParams: Promise<{ status?: string }> };
-
-export default async function CheckoutPage({ searchParams }: Props) {
-  const { status } = await searchParams;
+export default async function CheckoutPage() {
   const user = await getCurrentUser();
 
   if (user.paidAt) {
     return <UnlockedNotice />;
+  }
+
+  const lead = await getLeadForUser(user.id);
+  if (!lead) {
+    return (
+      <div className="mx-auto max-w-lg py-6">
+        <div className="mb-6 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
+            <Sparkles className="size-3.5" />
+            Bạn vừa học thử Ngày 1 miễn phí
+          </span>
+          <h1 className="mt-3 text-2xl font-bold text-gray-900">Mở khóa toàn bộ 28 Ngày Cắt Liều</h1>
+        </div>
+        <LeadForm />
+      </div>
+    );
   }
 
   let order = await getLatestOrder(user.id);
@@ -56,22 +71,10 @@ export default async function CheckoutPage({ searchParams }: Props) {
   }
 
   const isPendingLive = order?.status === "pending";
-  const previousOrderExpiredOrCancelled =
-    order && (order.status === "expired" || order.status === "cancelled");
+  const previousOrderExpired = order?.status === "expired";
 
   return (
     <div className="mx-auto max-w-lg space-y-6 py-6">
-      {status === "cancelled" && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Bạn đã huỷ giao dịch trước đó. Có thể thanh toán lại bất cứ lúc nào bên dưới.
-        </div>
-      )}
-      {status === "success" && !isPendingLive && (
-        <div className="rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-800">
-          Đang xác nhận thanh toán của bạn, vui lòng đợi trong giây lát rồi tải lại trang.
-        </div>
-      )}
-
       <div className="text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
           <Sparkles className="size-3.5" />
@@ -83,10 +86,9 @@ export default async function CheckoutPage({ searchParams }: Props) {
         </p>
       </div>
 
-      {previousOrderExpiredOrCancelled && (
+      {previousOrderExpired && (
         <div className="rounded-xl bg-gray-100 px-4 py-3 text-center text-sm text-gray-600">
-          Đơn hàng trước đó đã {order!.status === "expired" ? "hết hạn" : "bị huỷ"}. Tạo đơn hàng mới để
-          tiếp tục nhé.
+          Đơn hàng trước đó đã hết hạn. Tạo đơn hàng mới để tiếp tục nhé.
         </div>
       )}
 
@@ -97,19 +99,21 @@ export default async function CheckoutPage({ searchParams }: Props) {
               <Clock className="size-4" />
               Đơn hàng đang chờ thanh toán
             </p>
-            <div className="flex items-baseline justify-center gap-2">
-              <span className="text-3xl font-extrabold text-primary-600">{PROGRAM_PRICE_LABEL}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element -- external dynamically-generated QR image, not a local asset */}
+            <img
+              src={order.qrImageUrl}
+              alt="Mã QR chuyển khoản thanh toán"
+              className="mx-auto w-full max-w-[280px] rounded-xl border border-gray-200"
+            />
+            <div className="rounded-xl bg-gray-50 px-4 py-3 text-center text-sm text-gray-700">
+              <p>
+                Số tiền: <span className="font-bold text-primary-600">{PROGRAM_PRICE_LABEL}</span>
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Nội dung chuyển khoản (bắt buộc giữ nguyên): <br />
+                <span className="font-mono font-semibold text-gray-800">{order.orderCode}</span>
+              </p>
             </div>
-            <LinkButton
-              href={order.checkoutUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              className="w-full"
-            >
-              Mở trang thanh toán PayOS
-              <ArrowRight className="size-4" />
-            </LinkButton>
             <p className="text-center text-xs text-gray-400">
               Đã chuyển khoản rồi? Tải lại trang này sau vài giây để hệ thống tự cập nhật, không cần thao
               tác gì thêm.
@@ -137,7 +141,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
 
             <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-gray-400">
               <ShieldCheck className="size-3.5" />
-              Thanh toán qua PayOS — mở khóa tự động ngay sau khi hệ thống xác nhận
+              Chuyển khoản ngân hàng — mở khóa tự động ngay sau khi hệ thống xác nhận
             </p>
           </>
         )}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { createPayOSOrder } from "@/lib/actions/payment";
+import { createSepayOrder } from "@/lib/actions/payment";
 import { Button } from "@/components/ui/Button";
 import { PROGRAM_PRICE_LABEL } from "@/lib/constants";
 
 export function CreateOrderButton() {
-  const [state, action, pending] = useActionState(createPayOSOrder, undefined);
+  const [state, action, pending] = useActionState(createSepayOrder, undefined);
 
   return (
     <form action={action}>

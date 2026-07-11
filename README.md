@@ -6,7 +6,7 @@ Live: https://28-ngay-cat-lieu.vercel.app
 
 ## Tính năng
 
-- Học thử miễn phí bài Ngày 1 không cần đăng nhập (`/hoc-thu`), thanh toán qua PayOS (VietQR, tự động xác nhận qua webhook) để mở khóa toàn bộ chương trình
+- Học thử miễn phí bài Ngày 1 không cần đăng nhập (`/hoc-thu`); trước khi thanh toán cần điền form thu thập lead (SĐT, tên nhà thuốc, khảo sát); thanh toán qua SePay (chuyển khoản VietQR, tự động xác nhận qua webhook) để mở khóa toàn bộ chương trình, tự động gửi email xác nhận qua Resend
 - Đăng ký / đăng nhập, phiên đăng nhập bảo mật (session cookie ký bằng JWT)
 - Dashboard cá nhân: tiến độ tổng, streak, bài học tiếp theo, thử thách hôm nay, badge
 - Lộ trình 28 ngày chia 4 tuần, mở khóa tuần tự theo nhịp (theo lịch hoặc theo thời điểm thanh toán)
@@ -27,7 +27,7 @@ Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind CSS v4 · Prisma 7 
 ```bash
 npm install
 cp .env.example .env   # điền DATABASE_URL (Postgres), tự sinh SESSION_SECRET (openssl rand -base64 32),
-                        # và điền PAYOS_CLIENT_ID/PAYOS_API_KEY/PAYOS_CHECKSUM_KEY (từ business.payos.vn)
+                        # và điền SEPAY_*/RESEND_API_KEY/EMAIL_FROM (xem bên dưới)
 npx prisma migrate dev
 npx tsx prisma/seed.ts
 npm run dev
@@ -38,15 +38,21 @@ Mở [http://localhost:3000](http://localhost:3000).
 Tài khoản demo sau khi seed: `demo@capliu28ngay.vn` / `hoctap123` (đã ở trạng thái đã
 thanh toán để xem đúng trải nghiệm học viên đã mua).
 
-### Kết nối thanh toán PayOS (production)
+### Kết nối thanh toán SePay + email Resend (production)
 
-1. Thêm 3 biến `PAYOS_CLIENT_ID`, `PAYOS_API_KEY`, `PAYOS_CHECKSUM_KEY` và `APP_URL` (URL
-   thật của app) vào Vercel (Production/Preview/Development) — không dán giá trị thật vào
-   commit hay chat.
-2. Sau khi deploy, đăng ký webhook URL một lần:
-   `npx tsx scripts/register-payos-webhook.ts https://your-domain.vercel.app`
-3. Chi tiết luồng, các trạng thái đơn hàng, và kịch bản kiểm thử thủ công xem
-   `specs/002-payos-payment-integration/quickstart.md`.
+1. **SePay** (my.sepay.vn), tài khoản ngân hàng đã kết nối:
+   - Công ty → Cấu hình chung → Cấu trúc mã thanh toán → đặt tiền tố `CATLIEU`.
+   - Tích hợp WebHooks → tạo webhook trỏ về `https://<domain>/api/webhook/sepay`, xác
+     thực kiểu **API Key** → lấy giá trị cho `SEPAY_WEBHOOK_API_KEY`.
+   - API (đọc giao dịch) → lấy token cho `SEPAY_USER_API_TOKEN`.
+   - `SEPAY_BANK_ACCOUNT`/`SEPAY_BANK_NAME` là số tài khoản/tên ngân hàng đã kết nối
+     (không phải secret, hiển thị công khai trên QR).
+2. **Resend** (resend.com): thêm domain gửi email, xác minh DNS, lấy `RESEND_API_KEY`,
+   đặt `EMAIL_FROM` trên domain đã xác minh.
+3. Thêm toàn bộ biến trên vào Vercel (Production/Preview/Development) — không dán giá trị
+   thật vào commit hay chat.
+4. Chi tiết luồng, các trạng thái đơn hàng, và 7 kịch bản kiểm thử thủ công xem
+   `specs/003-sepay-lead-email/quickstart.md`.
 
 ## Phát triển tính năng mới / sửa lỗi
 
