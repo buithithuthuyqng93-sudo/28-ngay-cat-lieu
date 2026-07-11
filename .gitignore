@@ -48,6 +48,7 @@ next-env.d.ts
 
 .vercel
 .env*
+!.env.example
 
 # local agent tooling (not part of the app)
 .agents/

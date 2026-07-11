@@ -1,11 +1,9 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 import type { Lesson, Progress } from "@/generated/prisma/client";
+import { TOTAL_DAYS, FREE_TRIAL_DAY, PROGRAM_PRICE, PROGRAM_PRICE_LABEL } from "@/lib/constants";
 
-export const TOTAL_DAYS = 28;
-export const FREE_TRIAL_DAY = 1;
-export const PROGRAM_PRICE = 299000;
-export const PROGRAM_PRICE_LABEL = "299.000đ";
+export { TOTAL_DAYS, FREE_TRIAL_DAY, PROGRAM_PRICE, PROGRAM_PRICE_LABEL };
 
 export type LessonStatus = "locked" | "not_started" | "in_progress" | "completed";
 

@@ -23,6 +23,7 @@ model User {
 
   progress    Progress[]
   submissions Submission[]
+  orders      Order[]
 }
 
 model Lesson {
@@ -108,4 +109,22 @@ model Resource {
   description String
   content     String
   createdAt   DateTime @default(now())
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  userId          String
+  payosOrderCode  Int       @unique
+  amount          Int
+  status          String    @default("pending")
+  checkoutUrl     String
+  qrCode          String
+  paymentLinkId   String?
+  expiresAt       DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
