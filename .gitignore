@@ -51,6 +51,6 @@ next-env.d.ts
 
 # local agent tooling (not part of the app)
 .agents/
-.claude/
+.claude/scheduled_tasks.lock
 skills-lock.json
 _*.ts
